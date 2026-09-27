@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DropCraft.io — drag-and-drop image uploader with preview, progress and session activity log">
+    <title>DropCraft.io — Upload</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <section class="cover-page" id="coverPage">
+    <div class="cover-content">
+        <span class="brand-mark cover-brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 16a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.5 8.5 4.5 4.5 0 0 1 16 17H7z"></path>
+                <path d="M12 12v6"></path>
+                <path d="M9.5 15.5 12 18l2.5-2.5"></path>
+            </svg>
+        </span>
+        <h1>DropCraft<span class="main-header-sep">.io</span></h1>
+        <p>Drag and drop your images, preview them instantly, and keep them saved — no server, no sign-up, all inside your browser.</p>
+        <button type="button" class="btn-enter" id="enterUploadBtn">Upload</button>
+    </div>
+</section>
+<div class="shell" id="uploadPage" style="display:none;">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 16a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.5 8.5 4.5 4.5 0 0 1 16 17H7z"></path>
+                        <path d="M12 12v6"></path>
+                        <path d="M9.5 15.5 12 18l2.5-2.5"></path>
+                    </svg>
+                </span>
+                <span class="brand-name">DropCraft<span class="brand-dot">.io</span></span>
+            </div>
+
+            <nav class="nav" aria-label="Primary">
+                <button type="button" class="nav-item is-active" data-nav="upload">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+                    Upload
+                </button>
+            </nav>
+
+            <div class="sidebar-foot">
+                <div class="storage-meter">
+                    <div class="storage-meter-head">
+                        <span>Storage</span>
+                        <span id="storagePercent">0% used</span>
+                    </div>
+                    <div class="storage-meter-track">
+                        <div class="storage-meter-fill" id="storageFill"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <header class="main-header">
+                <h1>DropCraft<span class="main-header-sep">.io</span> — Enterprise File Storage</h1>
+            </header>
+
+            <div class="main-body">
+
+                <!-- UPLOAD COLUMN -->
+                <section class="upload-col">
+                    <div class="drop-zone" id="dropArea" role="button" tabindex="0"
+                         aria-label="Upload images: drag and drop, or press Enter to browse files">
+                        <span class="drop-zone-pill" id="dropPill">Drop zone active</span>
+                        <div class="drop-icon-box" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 18a4.5 4.5 0 0 1-.6-8.96A6 6 0 0 1 18 9.5 5 5 0 0 1 17 19H7Z"/>
+                                <path d="M12 12v7"/>
+                                <path d="m9 16.5 3 3 3-3"/>
+                            </svg>
+                        </div>
+                        <h2 class="drop-title">Drag &amp; drop image here</h2>
+                        <p class="drop-subtitle">or <span class="browse-link">browse files</span> from your device</p>
+                        <p class="drop-types">(JPG, PNG, GIF · max 8MB)</p>
+                    </div>
+
+                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/gif" multiple hidden>
+
+                    <div class="upload-progress" id="progressContainer">
+                        <div class="progress-header">
+                            <span>Processing: <strong id="progressFileName">—</strong></span>
+                            <span id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-size" id="progressSize"></div>
+                    </div>
+
+                    <div class="sync-note">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5"/><path d="M12 8h.01"/></svg>
+                        <span><strong>LocalStorage synced</strong> — these images persist after refresh.</span>
+                        <button type="button" class="btn-refresh" id="refreshBtn">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.36"/><path d="M21 3v6h-6"/></svg>
+                            Refresh now
+                        </button>
+                    </div>
+                </section>
+
+                <!-- GALLERY COLUMN -->
+                <section class="gallery-col">
+                    <div class="gallery-head">
+                        <h3>Preview &amp; History Gallery</h3>
+                        <span class="gallery-count"><span id="itemCount">0</span> items</span>
+                    </div>
+
+                    <div class="preview-grid" id="previewGrid"></div>
+
+                    <div class="empty-state" id="emptyState">
+                        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+                        <h4>No uploads saved yet</h4>
+                        <p>Drop an image on the left to get started.</p>
+                    </div>
+
+                    <div class="gallery-foot" id="galleryFoot">
+                        <button type="button" class="btn btn-danger" id="clearAllBtn">Clear all</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- ACTIVITY LOG -->
+        <aside class="activity-panel">
+            <h3>Upload Session Details</h3>
+            <ol class="activity-log" id="activityLog" aria-live="polite"></ol>
+        </aside>
+
+        <!-- TOAST (error / success) -->
+        <div class="toast" id="toast" role="alert" aria-live="assertive">
+            <span class="toast-icon" id="toastIcon">!</span>
+            <p class="toast-body" id="toastBody"></p>
+            <button type="button" class="toast-close" id="toastClose" aria-label="Dismiss">×</button>
+        </div>
+        <div class="lightbox" id="lightbox">
+    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
+    <img id="lightboxImg" src="" alt="">
+    <p class="lightbox-name" id="lightboxName"></p>
+</div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
